@@ -1,7 +1,6 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.service;
 
 
-
 import com.warehouse.inventory.WarehouseInventoryApplication.filter.JwtFilter;
 import com.warehouse.inventory.WarehouseInventoryApplication.model.Admin;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.UserRepository;
@@ -50,7 +49,7 @@ public class UserService {
 		}
 	}
 
-	
+
 	// invalidating/revoking jwtToken
 //	public String changePassword(String username, String newPassword) {
 //		
