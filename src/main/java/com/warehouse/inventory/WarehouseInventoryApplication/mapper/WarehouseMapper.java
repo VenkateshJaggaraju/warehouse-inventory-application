@@ -11,6 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface WarehouseMapper {
+
     Warehouse toEntity(WarehouseRequestDTO dto);
 
     WarehouseResponseDTO toResponse(Warehouse entity);

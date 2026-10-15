@@ -11,6 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface SupplierMapper {
+
     Supplier toEntity(SupplierRequestDTO dto);
 
     SupplierResponseDTO toResponse(Supplier entity);

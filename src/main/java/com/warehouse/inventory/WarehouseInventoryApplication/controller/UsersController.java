@@ -1,8 +1,8 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.controller;
 
-import Spring_Security.Spring_Security.Service.UserService;
-import Spring_Security.Spring_Security.entity.Users;
-import Spring_Security.Spring_Security.repository.UserRepository;
+
+import com.warehouse.inventory.WarehouseInventoryApplication.repository.UserRepository;
+import com.warehouse.inventory.WarehouseInventoryApplication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,10 +1,11 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.controller;
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.*;
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.*;
+
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.*;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,36 +16,37 @@ import java.util.List;
 @RequestMapping("/api/inventory")
 @RequiredArgsConstructor
 public class InventoryController {
-    private final InventoryService service;
+
+    @Autowired
+    private InventoryService inventoryService;
 
     @GetMapping
     public List<InventoryResponseDTO> getInventory() {
-        return service.getInventory();
+        return inventoryService.getInventory();
     }
 
     @GetMapping("/low-stock")
     public List<InventoryResponseDTO> getLowStock() {
-        return service.getLowStock();
+        return inventoryService.getLowStock();
     }
 
     @GetMapping("/movements")
     public List<StockMovementResponseDTO> getMovements() {
-        return service.getMovements();
+        return inventoryService.getMovements();
     }
 
     @PostMapping("/receipts")
     public ResponseEntity<StockMovementResponseDTO> receive(@Valid @RequestBody ReceiptRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.receive(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.receive(dto));
     }
 
     @PostMapping("/transfers")
     public ResponseEntity<List<StockMovementResponseDTO>> transfer(@Valid @RequestBody TransferRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.transfer(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.transfer(dto));
     }
 
     @PostMapping("/dispatches")
     public ResponseEntity<StockMovementResponseDTO> dispatch(@Valid @RequestBody DispatchRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.dispatch(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.dispatch(dto));
     }
 }
-l̥
