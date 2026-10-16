@@ -7,6 +7,7 @@ import com.warehouse.inventory.WarehouseInventoryApplication.model.Warehouse;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.WarehouseRepository;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class WarehouseServiceImpl implements WarehouseService {
-    private final WarehouseRepository repository;
-    private final WarehouseMapper mapper;
+
+    @Autowired
+    private WarehouseRepository repository;
+
+    @Autowired
+    private WarehouseMapper mapper;
 
     public WarehouseResponseDTO create(WarehouseRequestDTO dto) {
         return mapper.toResponse(repository.save(mapper.toEntity(dto)));

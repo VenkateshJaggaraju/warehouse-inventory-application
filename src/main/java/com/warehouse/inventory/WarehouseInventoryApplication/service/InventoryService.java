@@ -1,8 +1,12 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.service;
 
-
-
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.*;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.DispatchRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.ReceiptRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.ReconciliationRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.TransferRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.InventoryResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.ReconciliationResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.StockMovementResponseDTO;
 
 import java.util.List;
 

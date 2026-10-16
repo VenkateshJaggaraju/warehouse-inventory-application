@@ -1,7 +1,6 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.mapper;
 
-
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.ReconciliationResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.ReconciliationResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.model.StockReconciliation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

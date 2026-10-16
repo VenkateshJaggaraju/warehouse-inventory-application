@@ -1,8 +1,8 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.controller;
 
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.ReconciliationRequestDTO;
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.ReconciliationResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.ReconciliationRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.ReconciliationResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ReconciliationController {
 
     @Autowired
-    private final InventoryService inventoryService;
+    private InventoryService inventoryService;
 
     @PostMapping
     public ResponseEntity<ReconciliationResponseDTO> reconcile(@Valid @RequestBody ReconciliationRequestDTO dto) {

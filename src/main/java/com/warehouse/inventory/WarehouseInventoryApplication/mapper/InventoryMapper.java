@@ -1,6 +1,6 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.mapper;
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.InventoryResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.InventoryResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.model.Inventory;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

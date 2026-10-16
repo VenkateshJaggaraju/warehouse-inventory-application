@@ -1,7 +1,8 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.controller;
 
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.ProductRequestDTO;
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.ProductResponseDTO;
+
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.ProductResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,31 +19,31 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductService productService;
+    private ProductService service;
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@Valid @RequestBody ProductRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
 
     @GetMapping
     public List<ProductResponseDTO> getAll() {
-        return productService.getAll();
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
     public ProductResponseDTO getById(@PathVariable Long id) {
-        return productService.getById(id);
+        return service.getById(id);
     }
 
     @PutMapping("/{id}")
     public ProductResponseDTO update(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO dto) {
-        return productService.update(id, dto);
+        return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        productService.delete(id);
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

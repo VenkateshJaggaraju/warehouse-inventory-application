@@ -1,15 +1,13 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.model;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.math.BigDecimal;
-
 
 @Entity
 @Table(name = "products",
@@ -43,7 +41,7 @@ public class Product {
 
     @NotNull
     @Min(0)
+    @Builder.Default
     @Column(nullable = false)
     private Integer reorderLevel = 10;
 }
-

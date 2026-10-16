@@ -1,12 +1,14 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.service.impl;
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.ProductRequestDTO;
+
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.ProductRequestDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.ProductResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.mapper.ProductMapper;
 import com.warehouse.inventory.WarehouseInventoryApplication.model.Product;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.ProductRepository;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +20,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class ProductServiceImpl implements ProductService {
-    private final ProductRepository repository;
-    private final ProductMapper mapper;
+
+    @Autowired
+    private ProductRepository repository;
+
+    @Autowired
+    private ProductMapper mapper;
 
     public ProductResponseDTO create(ProductRequestDTO dto) {
         if (repository.existsBySkuIgnoreCase(dto.getSku()))

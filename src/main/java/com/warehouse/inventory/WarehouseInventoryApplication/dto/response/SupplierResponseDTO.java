@@ -1,4 +1,4 @@
-package com.warehouse.inventory.WarehouseInventoryApplication.dto;
+package com.warehouse.inventory.WarehouseInventoryApplication.dto.response;
 
 import lombok.*;
 

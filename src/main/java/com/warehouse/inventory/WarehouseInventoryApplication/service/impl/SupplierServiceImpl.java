@@ -7,6 +7,7 @@ import com.warehouse.inventory.WarehouseInventoryApplication.model.Supplier;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.SupplierRepository;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.SupplierService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class SupplierServiceImpl implements SupplierService {
-    private final SupplierRepository repository;
-    private final SupplierMapper mapper;
+
+    @Autowired
+    private SupplierRepository repository;
+
+    @Autowired
+    private SupplierMapper mapper;
 
     public SupplierResponseDTO create(SupplierRequestDTO dto) {
         return mapper.toResponse(repository.save(mapper.toEntity(dto)));

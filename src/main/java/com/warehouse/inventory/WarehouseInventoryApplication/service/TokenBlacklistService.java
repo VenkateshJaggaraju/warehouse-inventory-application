@@ -2,24 +2,28 @@ package com.warehouse.inventory.WarehouseInventoryApplication.service;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class TokenBlacklistService {
 
-    /*
-     * why ConcurrentHashMap instead of HashMap?
-     * thread-safe(i.e., one request can add a token while another request checks whether a token exists?)
-     */
-    private final Set<String> blacklistedTokens =
-            ConcurrentHashMap.newKeySet();
+    // token -> expiry. ConcurrentHashMap: thread-safe across concurrent requests.
+    private final Map<String, Date> blacklistedTokens = new ConcurrentHashMap<>();
 
-    public void blacklistToken(String token) {
-        blacklistedTokens.add(token);
+    public void blacklistToken(String token, Date expiresAt) {
+        purgeExpired();
+        blacklistedTokens.put(token, expiresAt);
     }
 
     public boolean isBlacklisted(String token) {
-        return blacklistedTokens.contains(token);
+        return blacklistedTokens.containsKey(token);
+    }
+
+    // An expired token is rejected anyway, so keep the map from growing forever.
+    private void purgeExpired() {
+        Date now = new Date();
+        blacklistedTokens.values().removeIf(exp -> exp.before(now));
     }
 }

@@ -1,43 +1,40 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.service.impl;
 
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.AdminRequestDTO;
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.AdminResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.AdminRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.AdminResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.enums.Role;
 import com.warehouse.inventory.WarehouseInventoryApplication.mapper.AdminMapper;
-import com.warehouse.inventory.WarehouseInventoryApplication.model.Admin;
-import com.warehouse.inventory.WarehouseInventoryApplication.repository.UserRepository;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.AdminService;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AdminImpl implements AdminService {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final AdminMapper adminMapper;
 
-    @Autowired
-    private UserRepository adminRepository;
-
-    @Autowired
-    private AdminMapper adminMapper;
-
+    @Override
     public AdminResponseDTO register(AdminRequestDTO dto) {
-
-        Admin admin = adminMapper.toEntity(dto);
-        Admin savedAdmin = userService.register(admin);
-        return adminMapper.toResponseDTO(savedAdmin);
+        return adminMapper.toResponseDTO(userService.register(adminMapper.toEntity(dto)));
     }
 
+    @Override
     public String login(AdminRequestDTO dto) {
-
-        Admin admin = adminMapper.toEntity(dto);
-        return userService.verify(admin);
+        return userService.verify(dto.getUsername(), dto.getPassword());
     }
 
+    @Override
     public String logout(HttpServletRequest request) {
         return userService.logout(request);
+    }
+
+    @Override
+    public AdminResponseDTO changeRole(String username, Role role) {
+        return adminMapper.toResponseDTO(userService.changeRole(username, role));
     }
 }

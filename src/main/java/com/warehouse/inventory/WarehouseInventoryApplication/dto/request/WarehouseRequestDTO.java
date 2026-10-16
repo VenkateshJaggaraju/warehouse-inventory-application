@@ -1,4 +1,4 @@
-package com.warehouse.inventory.WarehouseInventoryApplication.dto;
+package com.warehouse.inventory.WarehouseInventoryApplication.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

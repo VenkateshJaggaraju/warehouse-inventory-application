@@ -1,7 +1,10 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.controller;
 
-
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.*;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.DispatchRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.ReceiptRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.TransferRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.InventoryResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.StockMovementResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

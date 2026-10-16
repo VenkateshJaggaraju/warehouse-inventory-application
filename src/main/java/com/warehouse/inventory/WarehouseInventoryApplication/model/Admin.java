@@ -1,7 +1,7 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.warehouse.inventory.WarehouseInventoryApplication.enums.Role;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -12,17 +12,23 @@ import lombok.*;
 @AllArgsConstructor
 public class Admin {
 
-	@Id
-	Integer id;
-	String username;
-	String password;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Override
-	public String toString() {
-		return "User [username=" + username + ", password=" + password + "]";
-	}
+    @Column(nullable = false, unique = true, length = 100)
+    private String username;
 
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private Role role;
+
+    @Override
+    public String toString() {
+        // never include the password
+        return "Admin [id=" + id + ", username=" + username + ", role=" + role + "]";
+    }
 }
-
-
-

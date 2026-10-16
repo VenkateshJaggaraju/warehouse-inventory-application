@@ -4,113 +4,71 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
-	private String secretKey;
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
-	public JwtService() {
+    // 30 minutes in milliseconds (was 30*60*60 = 108 seconds)
+    private static final long EXPIRATION_MS = 30L * 60 * 1000;
 
-		try {
-			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-			SecretKey sk = keyGen.generateKey();
-			secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());// bytes to string
-		} catch (NoSuchAlgorithmException e) {
+    private final SecretKey key;
 
-			e.printStackTrace();
-		}
+    /**
+     * Set jwt.secret (Base64, >= 256 bits) in application.properties / env var so tokens
+     * survive restarts. If missing, a random key is generated (tokens die on restart).
+     */
+    public JwtService(@Value("${jwt.secret:}") String secret) {
+        if (secret == null || secret.isBlank()) {
+            log.warn("jwt.secret not configured - generating a random key; tokens will be invalid after restart");
+            this.key = Jwts.SIG.HS256.key().build();
+        } else {
+            this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        }
+    }
 
-	}
+    public String generateJwtToken(String username) {
+        long now = System.currentTimeMillis();
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + EXPIRATION_MS))
+                .signWith(key)
+                .compact();
+    }
 
-	public String generateJwtToken(String username) {
+    public boolean validateToken(String token, UserDetails userDetails) {
+        String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
 
-		Map<String, Object> claims = new HashMap<String, Object>();
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
 
-		return Jwts.builder().claims().add(claims).subject(username).issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + 30 * 60 * 60)).and().signWith(getKey()).compact();// ←
-																													// serializing
-																													// the
-																													// Java
-																													// Object
-		// add the claims AND sign in
-		// this token is valid for 30 minutes from system current time
-		// milliseconds × seconds × minutes × hours (N)
-		// hours × minutes × seconds × milliseconds (Y)
-//		return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30";
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
 
-		/*
-		 * compact() working {"alg":"HS256"} {"sub":"Ranni","iat":...,"exp":...}
-		 * base64(header) + "." + base64(payload) {header}.{payload}.{signature} return
-		 * a final String
-		 */
-	}
+    private <T> T extractClaim(String token, Function<Claims, T> resolver) {
+        return resolver.apply(extractAllClaims(token));
+    }
 
-	private SecretKey getKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-		return Keys.hmacShaKeyFor(keyBytes);
-	}
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+    }
 
-	public boolean validateToken(String token, UserDetails userDetails) {
-		final String username = extractUsername(token);
-		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-	}
-
-	public String extractUsername(String token) {
-
-		return extractClaim(token, Claims::getSubject);
-	}
-
-	private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
-		final Claims claims = extractAllClaims(token);
-		return claimResolver.apply(claims);
-	}
-
-	private Claims extractAllClaims(String token) {
-
-		return Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token).getPayload();
-//	1)	.parser() --> returns a JwtParserBuilder;you're just configuring how parsing should work.
-//	2)	.verifyWith(getKey()) — tells the builder: "when you parse a signed JWT, use this SecretKey to check the signature." getKey() 
-//		rebuilds the SecretKey object from your Base64 secretKey string (via Keys.hmacShaKeyFor(keyBytes)). 
-//		This doesn't verify anything yet either — it's still just configuration.
-//	3)	.build() — finalizes the configuration and produces an actual JwtParser object, ready to use.
-//	4)	.parseSignedClaims(token) --> Splits the token string into parts: header.payload.signature
-		// ← deserializing Java Object
-//	5)	.getPayload() --> extracts just the Claims object (the payload): subject, issuedAt, expiration
-
-	}
-
-	private boolean isTokenExpired(String token) {
-
-		return extractExpiration(token).before(new Date());
-	}
-
-	private Date extractExpiration(String token) {
-
-		return extractClaim(token, Claims::getExpiration);
-	}
-
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
 }
-
-/*
- * 🔑 SecretKey vs 🎫 Token
- * 
- * What is it? A secret cryptographic key A credential given to the client
- * Created by Your server/application Your server Given to client? ❌ Never ✅ Yes
- * Used for Signing/verifying JWT Proving authentication Should be public? ❌
- * Absolutely not It can be sent with requests Example my-super-secret-key...
- * eyJhbGciOiJIUzI1NiJ9... Stored where? Server/environment variable Client side
- * / cookie depending on design Changes frequently? Usually no Yes, tokens
- * expire/rotate
- */

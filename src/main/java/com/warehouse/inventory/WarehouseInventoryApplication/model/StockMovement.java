@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "stock_movements",
-        indexes = @Index(columnList = "transactionReference"))
+        indexes = @Index(columnList = "transaction_reference"))
 @Getter
 @Setter
 @Builder
@@ -20,10 +20,11 @@ public class StockMovement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    // LAZY + entity graph in the repository => no N+1 and no accidental eager loading
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Product product;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Warehouse warehouse;
 
     @Enumerated(EnumType.STRING)
@@ -54,4 +55,3 @@ public class StockMovement {
         createdAt = LocalDateTime.now();
     }
 }
-

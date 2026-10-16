@@ -1,32 +1,31 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.controller;
 
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.AdminRequestDTO;
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.AdminResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.AdminRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.AdminResponseDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.enums.Role;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
-//@CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
 public class UserController {
 
     @Autowired
     private AdminService adminService;
 
     @PostMapping("/register")
-    public AdminResponseDTO register(@RequestBody AdminRequestDTO dto) {
+    public AdminResponseDTO register(@Valid @RequestBody AdminRequestDTO dto) {
         return adminService.register(dto);
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody AdminRequestDTO dto) {
+    public String login(@Valid @RequestBody AdminRequestDTO dto) {
         return adminService.login(dto);
     }
 
@@ -35,4 +34,9 @@ public class UserController {
         return adminService.logout(request);
     }
 
+    // ADMIN only (see SecurityConfig): promote/demote users
+    @PutMapping("/users/{username}/role")
+    public AdminResponseDTO changeRole(@PathVariable String username, @RequestParam Role role) {
+        return adminService.changeRole(username, role);
+    }
 }

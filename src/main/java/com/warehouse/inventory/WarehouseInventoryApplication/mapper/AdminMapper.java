@@ -1,7 +1,8 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.mapper;
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.AdminRequestDTO;
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.AdminResponseDTO;
+
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.AdminRequestDTO;
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.AdminResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.model.Admin;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,10 +10,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AdminMapper {
 
-    // Entity <- DTO
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "role", ignore = true) // role is decided by the server, never by the client
     Admin toEntity(AdminRequestDTO dto);
 
-    // DTO <- Entity
     AdminResponseDTO toResponseDTO(Admin admin);
 }

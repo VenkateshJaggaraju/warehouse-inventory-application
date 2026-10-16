@@ -1,6 +1,7 @@
 package com.warehouse.inventory.WarehouseInventoryApplication.service;
 
-import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.ProductRequestDTO;
+
+import com.warehouse.inventory.WarehouseInventoryApplication.dto.ProductRequestDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.ProductResponseDTO;
 
 import java.util.List;
