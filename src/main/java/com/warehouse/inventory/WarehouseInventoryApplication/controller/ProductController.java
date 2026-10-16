@@ -19,6 +19,8 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@Valid @RequestBody ProductRequestDTO dto) {
+//        Place the @Valid annotation right before the incoming payload argument:
+        // If execution reaches here, the data has passed validation successfully
         return productService.create(dto);
     }
 
