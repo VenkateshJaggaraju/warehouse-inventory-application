@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -65,35 +66,51 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponseDTO> getInventory() {
-        return inventoryRepository.findAllWithDetails().stream().map(inventoryMapper::toResponse).toList();
+        return inventoryRepository
+                .findAllWithDetails()
+                .stream()
+                .map(inventoryMapper::toResponse)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponseDTO> getLowStock() {
-        return inventoryRepository.findLowStock().stream().map(inventoryMapper::toResponse).toList();
+        return inventoryRepository
+                .findLowStock()
+                .stream()
+                .map(inventoryMapper::toResponse)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StockMovementResponseDTO> getMovements() {
-        return movementRepository.findAllByOrderByCreatedAtDesc().stream().map(movementMapper::toResponse).toList();
+        return movementRepository
+                .findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(movementMapper::toResponse)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ReconciliationResponseDTO> getDiscrepancies() {
-        return reconciliationRepository.findByDiscrepancyNotOrderByCreatedAtDesc(0)
-                .stream().map(reconciliationMapper::toResponse).toList();
+        return reconciliationRepository
+                .findByDiscrepancyNotOrderByCreatedAtDesc(0)
+                .stream()
+                .map(reconciliationMapper::toResponse)
+                .toList();
     }
 
     // --------------------------------------------------------------- commands
 
     @Override
-    public StockMovementResponseDTO receive(ReceiptRequestDTO dto) {
+    public ResponseEntity<StockMovementResponseDTO> receive(ReceiptRequestDTO dto) {
         Product p = product(dto.getProductId());
         Warehouse w = warehouse(dto.getWarehouseId());
-        if (dto.getSupplierId() != null && !supplierRepository.existsById(dto.getSupplierId())) {
+        if (dto.getSupplierId() != null &&
+                !supplierRepository.existsById(dto.getSupplierId())) {
             throw notFound("Supplier", dto.getSupplierId());
         }
 
@@ -104,16 +121,24 @@ public class InventoryServiceImpl implements InventoryService {
 
         StockMovement m = movement(p, w, MovementType.RECEIPT, dto.getQuantity(), before,
                 inv.getQuantity(), dto.getTransactionReference());
+
         m.setSupplierId(dto.getSupplierId());
         m.setDestinationWarehouseId(w.getId());
-        return movementMapper.toResponse(movementRepository.save(m));
+
+        StockMovementResponseDTO result = movementMapper.toResponse(movementRepository.save(m));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(result);
     }
 
     @Override
-    public List<StockMovementResponseDTO> transfer(TransferRequestDTO dto) {
+    public ResponseEntity<List<StockMovementResponseDTO>> transfer(TransferRequestDTO dto) {
         if (dto.getSourceWarehouseId().equals(dto.getDestinationWarehouseId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Source and destination warehouses must differ");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Source and destination warehouses must differ"
+            );
         }
+
         Product p = product(dto.getProductId());
         Warehouse source = warehouse(dto.getSourceWarehouseId());
         Warehouse destination = warehouse(dto.getDestinationWarehouseId());
@@ -131,6 +156,7 @@ public class InventoryServiceImpl implements InventoryService {
         if (sourceInv == null || sourceInv.getQuantity() < dto.getQuantity()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock in source warehouse");
         }
+
         if (destinationInv == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Destination inventory row could not be initialized");
@@ -145,22 +171,33 @@ public class InventoryServiceImpl implements InventoryService {
 
         StockMovement out = movement(p, source, MovementType.TRANSFER_OUT, dto.getQuantity(),
                 sourceBefore, sourceInv.getQuantity(), dto.getTransactionReference());
+
         out.setSourceWarehouseId(source.getId());
         out.setDestinationWarehouseId(destination.getId());
 
         StockMovement in = movement(p, destination, MovementType.TRANSFER_IN, dto.getQuantity(),
                 destBefore, destinationInv.getQuantity(), dto.getTransactionReference());
+
         in.setSourceWarehouseId(source.getId());
         in.setDestinationWarehouseId(destination.getId());
 
-        return List.of(movementMapper.toResponse(movementRepository.save(out)),
-                movementMapper.toResponse(movementRepository.save(in)));
+        List<StockMovementResponseDTO> result = List.of(
+                movementMapper.toResponse(movementRepository.save(out)
+                ),
+                movementMapper.toResponse(movementRepository.save(in))
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(result);
     }
 
     @Override
-    public StockMovementResponseDTO dispatch(DispatchRequestDTO dto) {
+    public ResponseEntity<StockMovementResponseDTO> dispatch(DispatchRequestDTO dto) {
+
         Product p = product(dto.getProductId());
         Warehouse w = warehouse(dto.getWarehouseId());
+
         Inventory inv = inventoryRepository.findLocked(p.getId(), w.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
                         "No inventory exists for this product in the warehouse"));
@@ -169,17 +206,25 @@ public class InventoryServiceImpl implements InventoryService {
         if (before < dto.getQuantity()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock");
         }
+
         inv.setQuantity(before - dto.getQuantity());
         inventoryRepository.save(inv);
 
         StockMovement m = movement(p, w, MovementType.DISPATCH, dto.getQuantity(), before,
                 inv.getQuantity(), dto.getTransactionReference());
+
         m.setSourceWarehouseId(w.getId());
-        return movementMapper.toResponse(movementRepository.save(m));
+
+        StockMovementResponseDTO result = movementMapper.toResponse(movementRepository.save(m));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(result);
     }
 
     @Override
     public ReconciliationResponseDTO reconcile(ReconciliationRequestDTO dto) {
+
         Product p = product(dto.getProductId());
         Warehouse w = warehouse(dto.getWarehouseId());
         Inventory inv = lockedInventoryOrCreate(p, w);
@@ -200,6 +245,7 @@ public class InventoryServiceImpl implements InventoryService {
             movementRepository.save(movement(p, w, MovementType.RECONCILIATION_ADJUSTMENT,
                     Math.abs(discrepancy), expected, physical, dto.getReference()));
         }
+
         return reconciliationMapper.toResponse(rec);
     }
 

@@ -9,7 +9,6 @@ import com.warehouse.inventory.WarehouseInventoryApplication.service.InventorySe
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,16 +39,17 @@ public class InventoryController {
 
     @PostMapping("/receipts")
     public ResponseEntity<StockMovementResponseDTO> receive(@Valid @RequestBody ReceiptRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.receive(dto));
+        return inventoryService.receive(dto);
     }
 
     @PostMapping("/transfers")
     public ResponseEntity<List<StockMovementResponseDTO>> transfer(@Valid @RequestBody TransferRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.transfer(dto));
+        return inventoryService.transfer(dto);
     }
 
     @PostMapping("/dispatches")
     public ResponseEntity<StockMovementResponseDTO> dispatch(@Valid @RequestBody DispatchRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.dispatch(dto));
+//        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.dispatch(dto));
+        return inventoryService.dispatch(dto);
     }
 }

@@ -7,6 +7,7 @@ import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.Transfe
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.InventoryResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.ReconciliationResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.StockMovementResponseDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -15,11 +16,11 @@ public interface InventoryService {
 
     List<InventoryResponseDTO> getLowStock();
 
-    StockMovementResponseDTO receive(ReceiptRequestDTO dto);
+    ResponseEntity<StockMovementResponseDTO> receive(ReceiptRequestDTO dto);
 
-    List<StockMovementResponseDTO> transfer(TransferRequestDTO dto);
+    ResponseEntity<List<StockMovementResponseDTO>> transfer(TransferRequestDTO dto);
 
-    StockMovementResponseDTO dispatch(DispatchRequestDTO dto);
+    ResponseEntity<StockMovementResponseDTO> dispatch(DispatchRequestDTO dto);
 
     List<StockMovementResponseDTO> getMovements();
 

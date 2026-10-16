@@ -19,31 +19,31 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductService service;
+    private ProductService productService;
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@Valid @RequestBody ProductRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(dto));
     }
 
     @GetMapping
     public List<ProductResponseDTO> getAll() {
-        return service.getAll();
+        return productService.getAll();
     }
 
     @GetMapping("/{id}")
     public ProductResponseDTO getById(@PathVariable Long id) {
-        return service.getById(id);
+        return productService.getById(id);
     }
 
     @PutMapping("/{id}")
     public ProductResponseDTO update(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO dto) {
-        return service.update(id, dto);
+        return productService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
+        productService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
