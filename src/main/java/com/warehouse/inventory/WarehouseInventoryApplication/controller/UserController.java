@@ -7,13 +7,11 @@ import com.warehouse.inventory.WarehouseInventoryApplication.enums.Role;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
-@RequiredArgsConstructor
 public class UserController {
 
     @Autowired

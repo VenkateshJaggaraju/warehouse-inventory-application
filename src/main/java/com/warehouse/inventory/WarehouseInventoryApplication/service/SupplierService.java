@@ -2,11 +2,12 @@ package com.warehouse.inventory.WarehouseInventoryApplication.service;
 
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.SupplierRequestDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.SupplierResponseDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface SupplierService {
-    SupplierResponseDTO create(SupplierRequestDTO dto);
+    ResponseEntity<SupplierResponseDTO> create(SupplierRequestDTO dto);
 
     List<SupplierResponseDTO> getAll();
 
@@ -14,5 +15,5 @@ public interface SupplierService {
 
     SupplierResponseDTO update(Long id, SupplierRequestDTO dto);
 
-    void delete(Long id);
+    ResponseEntity<Void> delete(Long id);
 }

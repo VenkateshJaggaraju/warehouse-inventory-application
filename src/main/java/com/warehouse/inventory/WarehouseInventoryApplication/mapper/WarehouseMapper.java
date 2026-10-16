@@ -12,8 +12,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface WarehouseMapper {
     Warehouse toEntity(WarehouseRequestDTO dto);
 
-    WarehouseResponseDTO toResponse(Warehouse entity);
+    WarehouseResponseDTO toResponse(Warehouse warehouse);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntity(WarehouseRequestDTO dto, @MappingTarget Warehouse entity);
+    void updateEntity(WarehouseRequestDTO dto, @MappingTarget Warehouse warehouse);
 }

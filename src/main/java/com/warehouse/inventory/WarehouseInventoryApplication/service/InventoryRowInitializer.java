@@ -4,7 +4,6 @@ import com.warehouse.inventory.WarehouseInventoryApplication.model.Inventory;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.InventoryRepository;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.ProductRepository;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.WarehouseRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Database-agnostic replacement for a native "INSERT ... ON CONFLICT DO NOTHING".
  */
 @Component
-@RequiredArgsConstructor
 public class InventoryRowInitializer {
 
     @Autowired

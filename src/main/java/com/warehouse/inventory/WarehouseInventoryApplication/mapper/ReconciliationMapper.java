@@ -12,5 +12,5 @@ public interface ReconciliationMapper {
     @Mapping(target = "productName", source = "product.name")
     @Mapping(target = "warehouseId", source = "warehouse.id")
     @Mapping(target = "warehouseName", source = "warehouse.name")
-    ReconciliationResponseDTO toResponse(StockReconciliation entity);
+    ReconciliationResponseDTO toResponse(StockReconciliation stockReconciliation);
 }

@@ -7,7 +7,6 @@ import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.Invent
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.StockMovementResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.InventoryService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
-@RequiredArgsConstructor
 public class InventoryController {
 
     @Autowired
@@ -49,7 +47,6 @@ public class InventoryController {
 
     @PostMapping("/dispatches")
     public ResponseEntity<StockMovementResponseDTO> dispatch(@Valid @RequestBody DispatchRequestDTO dto) {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(inventoryService.dispatch(dto));
         return inventoryService.dispatch(dto);
     }
 }

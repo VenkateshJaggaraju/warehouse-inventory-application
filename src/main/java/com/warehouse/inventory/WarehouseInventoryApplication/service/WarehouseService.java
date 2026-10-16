@@ -2,11 +2,12 @@ package com.warehouse.inventory.WarehouseInventoryApplication.service;
 
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.WarehouseRequestDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.WarehouseResponseDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface WarehouseService {
-    WarehouseResponseDTO create(WarehouseRequestDTO dto);
+    ResponseEntity<WarehouseResponseDTO> create(WarehouseRequestDTO dto);
 
     List<WarehouseResponseDTO> getAll();
 
@@ -14,5 +15,5 @@ public interface WarehouseService {
 
     WarehouseResponseDTO update(Long id, WarehouseRequestDTO dto);
 
-    void delete(Long id);
+    ResponseEntity<Void> delete(Long id);
 }

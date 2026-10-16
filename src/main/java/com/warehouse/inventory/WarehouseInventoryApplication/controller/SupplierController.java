@@ -5,9 +5,7 @@ import com.warehouse.inventory.WarehouseInventoryApplication.dto.request.Supplie
 import com.warehouse.inventory.WarehouseInventoryApplication.dto.response.SupplierResponseDTO;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.SupplierService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,35 +13,33 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/suppliers")
-@RequiredArgsConstructor
 public class SupplierController {
 
     @Autowired
-    private SupplierService service;
+    private SupplierService supplierService;
 
     @PostMapping
     public ResponseEntity<SupplierResponseDTO> create(@Valid @RequestBody SupplierRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
+        return supplierService.create(dto);
     }
 
     @GetMapping
     public List<SupplierResponseDTO> getAll() {
-        return service.getAll();
+        return supplierService.getAll();
     }
 
     @GetMapping("/{id}")
     public SupplierResponseDTO getById(@PathVariable Long id) {
-        return service.getById(id);
+        return supplierService.getById(id);
     }
 
     @PutMapping("/{id}")
     public SupplierResponseDTO update(@PathVariable Long id, @Valid @RequestBody SupplierRequestDTO dto) {
-        return service.update(id, dto);
+        return supplierService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+        return supplierService.delete(id);
     }
 }

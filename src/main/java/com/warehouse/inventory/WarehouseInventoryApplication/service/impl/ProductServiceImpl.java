@@ -7,9 +7,9 @@ import com.warehouse.inventory.WarehouseInventoryApplication.mapper.ProductMappe
 import com.warehouse.inventory.WarehouseInventoryApplication.model.Product;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.ProductRepository;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,45 +17,57 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private ProductRepository repository;
+    private ProductRepository productRepository;
 
     @Autowired
-    private ProductMapper mapper;
+    private ProductMapper productMapper;
 
-    public ProductResponseDTO create(ProductRequestDTO dto) {
-        if (repository.existsBySkuIgnoreCase(dto.getSku()))
+    public ResponseEntity<ProductResponseDTO> create(ProductRequestDTO dto) {
+        if (productRepository.existsBySkuIgnoreCase(dto.getSku()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "SKU already exists");
-        return mapper.toResponse(repository.save(mapper.toEntity(dto)));
+
+        ProductResponseDTO result = productMapper.toResponse(productRepository.save(productMapper.toEntity(dto)));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponseDTO> getAll() {
-        return repository.findAll().stream().map(mapper::toResponse).toList();
+        return productRepository
+                .findAll()
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public ProductResponseDTO getById(Long id) {
-        return mapper.toResponse(getEntity(id));
+        return productMapper.toResponse(getEntity(id));
     }
 
     public ProductResponseDTO update(Long id, ProductRequestDTO dto) {
-        Product p = getEntity(id);
-        if (!p.getSku().equalsIgnoreCase(dto.getSku()) && repository.existsBySkuIgnoreCase(dto.getSku()))
+        Product product = getEntity(id);
+        if (!product.getSku().equalsIgnoreCase(dto.getSku()) && productRepository.existsBySkuIgnoreCase(dto.getSku()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "SKU already exists");
-        mapper.updateEntity(dto, p);
-        return mapper.toResponse(repository.save(p));
+        productMapper.updateEntity(dto, product);
+
+        return productMapper.toResponse(productRepository.save(product));
     }
 
-    public void delete(Long id) {
-        repository.delete(getEntity(id));
+    public ResponseEntity<Void> delete(Long id) {
+        productRepository.delete(getEntity(id));
+        return ResponseEntity.noContent().build();
     }
 
     private Product getEntity(Long id) {
-        return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found: " + id));
+        return productRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Product not found: " + id)
+                );
     }
 }

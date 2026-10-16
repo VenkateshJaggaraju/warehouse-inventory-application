@@ -8,15 +8,17 @@ import com.warehouse.inventory.WarehouseInventoryApplication.mapper.AdminMapper;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.AdminService;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AdminImpl implements AdminService {
 
-    private final UserService userService;
-    private final AdminMapper adminMapper;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AdminMapper adminMapper;
 
     @Override
     public AdminResponseDTO register(AdminRequestDTO dto) {

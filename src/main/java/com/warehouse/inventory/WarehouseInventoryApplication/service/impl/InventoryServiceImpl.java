@@ -15,7 +15,6 @@ import com.warehouse.inventory.WarehouseInventoryApplication.model.*;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.*;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.InventoryRowInitializer;
 import com.warehouse.inventory.WarehouseInventoryApplication.service.InventoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class InventoryServiceImpl implements InventoryService {
 
@@ -107,28 +105,28 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public ResponseEntity<StockMovementResponseDTO> receive(ReceiptRequestDTO dto) {
-        Product p = product(dto.getProductId());
-        Warehouse w = warehouse(dto.getWarehouseId());
+        Product product = product(dto.getProductId());
+        Warehouse warehouse = warehouse(dto.getWarehouseId());
         if (dto.getSupplierId() != null &&
                 !supplierRepository.existsById(dto.getSupplierId())) {
             throw notFound("Supplier", dto.getSupplierId());
         }
 
-        Inventory inv = lockedInventoryOrCreate(p, w);
-        int before = inv.getQuantity();
-        inv.setQuantity(Math.addExact(before, dto.getQuantity()));
-        inventoryRepository.save(inv);
+        Inventory inventory = lockedInventoryOrCreate(product, warehouse);
+        int before = inventory.getQuantity();
+        inventory.setQuantity(Math.addExact(before, dto.getQuantity()));
+        inventoryRepository.save(inventory);
 
-        StockMovement m = movement(p, w, MovementType.RECEIPT, dto.getQuantity(), before,
-                inv.getQuantity(), dto.getTransactionReference());
+        StockMovement stockMovement = movement(product, warehouse, MovementType.RECEIPT, dto.getQuantity(), before,
+                inventory.getQuantity(), dto.getTransactionReference());
 
-        m.setSupplierId(dto.getSupplierId());
-        m.setDestinationWarehouseId(w.getId());
+        stockMovement.setSupplierId(dto.getSupplierId());
+        stockMovement.setDestinationWarehouseId(warehouse.getId());
 
-        StockMovementResponseDTO result = movementMapper.toResponse(movementRepository.save(m));
+        StockMovementResponseDTO response = movementMapper.toResponse(movementRepository.save(stockMovement));
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(result);
+                .body(response);
     }
 
     @Override
@@ -139,47 +137,47 @@ public class InventoryServiceImpl implements InventoryService {
             );
         }
 
-        Product p = product(dto.getProductId());
-        Warehouse source = warehouse(dto.getSourceWarehouseId());
-        Warehouse destination = warehouse(dto.getDestinationWarehouseId());
+        Product product = product(dto.getProductId());
+        Warehouse sourceWarehouse = warehouse(dto.getSourceWarehouseId());
+        Warehouse destinationWarehouse = warehouse(dto.getDestinationWarehouseId());
 
         // Make sure the destination row exists, then lock both rows in a stable
         // warehouse-id order to avoid deadlocks between opposite transfers.
-        ensureInventoryRow(p.getId(), destination.getId());
-        Long first = Math.min(source.getId(), destination.getId());
-        Long second = Math.max(source.getId(), destination.getId());
-        Inventory firstInv = inventoryRepository.findLocked(p.getId(), first).orElse(null);
-        Inventory secondInv = inventoryRepository.findLocked(p.getId(), second).orElse(null);
-        Inventory sourceInv = source.getId().equals(first) ? firstInv : secondInv;
-        Inventory destinationInv = destination.getId().equals(first) ? firstInv : secondInv;
+        ensureInventoryRow(product.getId(), destinationWarehouse.getId());
+        Long first = Math.min(sourceWarehouse.getId(), destinationWarehouse.getId());
+        Long second = Math.max(sourceWarehouse.getId(), destinationWarehouse.getId());
+        Inventory firstInventory = inventoryRepository.findLocked(product.getId(), first).orElse(null);
+        Inventory secondInventory = inventoryRepository.findLocked(product.getId(), second).orElse(null);
+        Inventory sourceInventory = sourceWarehouse.getId().equals(first) ? firstInventory : secondInventory;
+        Inventory destinationInventory = destinationWarehouse.getId().equals(first) ? firstInventory : secondInventory;
 
-        if (sourceInv == null || sourceInv.getQuantity() < dto.getQuantity()) {
+        if (sourceInventory == null || sourceInventory.getQuantity() < dto.getQuantity()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock in source warehouse");
         }
 
-        if (destinationInv == null) {
+        if (destinationInventory == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Destination inventory row could not be initialized");
         }
 
-        int sourceBefore = sourceInv.getQuantity();
-        int destBefore = destinationInv.getQuantity();
-        sourceInv.setQuantity(sourceBefore - dto.getQuantity());
-        destinationInv.setQuantity(Math.addExact(destBefore, dto.getQuantity()));
-        inventoryRepository.save(sourceInv);
-        inventoryRepository.save(destinationInv);
+        int sourceBefore = sourceInventory.getQuantity();
+        int destBefore = destinationInventory.getQuantity();
+        sourceInventory.setQuantity(sourceBefore - dto.getQuantity());
+        destinationInventory.setQuantity(Math.addExact(destBefore, dto.getQuantity()));
+        inventoryRepository.save(sourceInventory);
+        inventoryRepository.save(destinationInventory);
 
-        StockMovement out = movement(p, source, MovementType.TRANSFER_OUT, dto.getQuantity(),
-                sourceBefore, sourceInv.getQuantity(), dto.getTransactionReference());
+        StockMovement out = movement(product, sourceWarehouse, MovementType.TRANSFER_OUT, dto.getQuantity(),
+                sourceBefore, sourceInventory.getQuantity(), dto.getTransactionReference());
 
-        out.setSourceWarehouseId(source.getId());
-        out.setDestinationWarehouseId(destination.getId());
+        out.setSourceWarehouseId(sourceWarehouse.getId());
+        out.setDestinationWarehouseId(destinationWarehouse.getId());
 
-        StockMovement in = movement(p, destination, MovementType.TRANSFER_IN, dto.getQuantity(),
-                destBefore, destinationInv.getQuantity(), dto.getTransactionReference());
+        StockMovement in = movement(product, destinationWarehouse, MovementType.TRANSFER_IN, dto.getQuantity(),
+                destBefore, destinationInventory.getQuantity(), dto.getTransactionReference());
 
-        in.setSourceWarehouseId(source.getId());
-        in.setDestinationWarehouseId(destination.getId());
+        in.setSourceWarehouseId(sourceWarehouse.getId());
+        in.setDestinationWarehouseId(destinationWarehouse.getId());
 
         List<StockMovementResponseDTO> result = List.of(
                 movementMapper.toResponse(movementRepository.save(out)
@@ -195,27 +193,27 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public ResponseEntity<StockMovementResponseDTO> dispatch(DispatchRequestDTO dto) {
 
-        Product p = product(dto.getProductId());
-        Warehouse w = warehouse(dto.getWarehouseId());
+        Product product = product(dto.getProductId());
+        Warehouse warehouse = warehouse(dto.getWarehouseId());
 
-        Inventory inv = inventoryRepository.findLocked(p.getId(), w.getId())
+        Inventory inventory = inventoryRepository.findLocked(product.getId(), warehouse.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
                         "No inventory exists for this product in the warehouse"));
 
-        int before = inv.getQuantity();
+        int before = inventory.getQuantity();
         if (before < dto.getQuantity()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock");
         }
 
-        inv.setQuantity(before - dto.getQuantity());
-        inventoryRepository.save(inv);
+        inventory.setQuantity(before - dto.getQuantity());
+        inventoryRepository.save(inventory);
 
-        StockMovement m = movement(p, w, MovementType.DISPATCH, dto.getQuantity(), before,
-                inv.getQuantity(), dto.getTransactionReference());
+        StockMovement stockMovement = movement(product, warehouse, MovementType.DISPATCH, dto.getQuantity(), before,
+                inventory.getQuantity(), dto.getTransactionReference());
 
-        m.setSourceWarehouseId(w.getId());
+        stockMovement.setSourceWarehouseId(warehouse.getId());
 
-        StockMovementResponseDTO result = movementMapper.toResponse(movementRepository.save(m));
+        StockMovementResponseDTO result = movementMapper.toResponse(movementRepository.save(stockMovement));
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -223,39 +221,40 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public ReconciliationResponseDTO reconcile(ReconciliationRequestDTO dto) {
+    public ResponseEntity<ReconciliationResponseDTO> reconcile(ReconciliationRequestDTO dto) {
 
-        Product p = product(dto.getProductId());
-        Warehouse w = warehouse(dto.getWarehouseId());
-        Inventory inv = lockedInventoryOrCreate(p, w);
+        Product product = product(dto.getProductId());
+        Warehouse warehouse = warehouse(dto.getWarehouseId());
+        Inventory inventory = lockedInventoryOrCreate(product, warehouse);
 
-        int expected = inv.getQuantity();
+        int expected = inventory.getQuantity();
         int physical = dto.getPhysicalQuantity();
         int discrepancy = physical - expected;
 
-        StockReconciliation rec = reconciliationRepository.save(StockReconciliation.builder()
-                .product(p).warehouse(w)
+        StockReconciliation stockReconciliation = reconciliationRepository.save(StockReconciliation.builder()
+                .product(product).warehouse(warehouse)
                 .expectedQuantity(expected).physicalQuantity(physical).discrepancy(discrepancy)
                 .reference(dto.getReference())
                 .build());
 
         if (discrepancy != 0) {
-            inv.setQuantity(physical);
-            inventoryRepository.save(inv);
-            movementRepository.save(movement(p, w, MovementType.RECONCILIATION_ADJUSTMENT,
+            inventory.setQuantity(physical);
+            inventoryRepository.save(inventory);
+            movementRepository.save(movement(product, warehouse, MovementType.RECONCILIATION_ADJUSTMENT,
                     Math.abs(discrepancy), expected, physical, dto.getReference()));
         }
 
-        return reconciliationMapper.toResponse(rec);
+        ReconciliationResponseDTO result = reconciliationMapper.toResponse(stockReconciliation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     // ---------------------------------------------------------------- helpers
 
-    private StockMovement movement(Product p, Warehouse w, MovementType type, int qty,
+    private StockMovement movement(Product product, Warehouse warehouse, MovementType movementType, int quantity,
                                    int before, int after, String reference) {
         return StockMovement.builder()
-                .product(p).warehouse(w).type(type)
-                .quantity(qty).quantityBefore(before).quantityAfter(after)
+                .product(product).warehouse(warehouse).type(movementType)
+                .quantity(quantity).quantityBefore(before).quantityAfter(after)
                 .transactionReference(reference)
                 .build();
     }
@@ -276,11 +275,17 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     private Product product(Long id) {
-        return productRepository.findById(id).orElseThrow(() -> notFound("Product", id));
+        return productRepository
+                .findById(id)
+                .orElseThrow(() -> notFound("Product", id)
+                );
     }
 
     private Warehouse warehouse(Long id) {
-        return warehouseRepository.findById(id).orElseThrow(() -> notFound("Warehouse", id));
+        return warehouseRepository
+                .findById(id)
+                .orElseThrow(() -> notFound("Warehouse", id)
+                );
     }
 
     private ResponseStatusException notFound(String type, Long id) {

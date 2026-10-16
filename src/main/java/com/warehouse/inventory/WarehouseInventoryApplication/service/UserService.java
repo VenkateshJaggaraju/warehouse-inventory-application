@@ -4,23 +4,21 @@ import com.warehouse.inventory.WarehouseInventoryApplication.enums.Role;
 import com.warehouse.inventory.WarehouseInventoryApplication.model.Admin;
 import com.warehouse.inventory.WarehouseInventoryApplication.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
-    private final PasswordEncoder encoder;
+    private BCryptPasswordEncoder encoder=new BCryptPasswordEncoder(10);
 
     @Autowired
     private AuthenticationManager authenticationManager;

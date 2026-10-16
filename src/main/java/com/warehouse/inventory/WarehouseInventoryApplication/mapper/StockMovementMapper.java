@@ -12,5 +12,5 @@ public interface StockMovementMapper {
     @Mapping(target = "productName", source = "product.name")
     @Mapping(target = "warehouseId", source = "warehouse.id")
     @Mapping(target = "warehouseName", source = "warehouse.name")
-    StockMovementResponseDTO toResponse(StockMovement entity);
+    StockMovementResponseDTO toResponse(StockMovement stockMovement);
 }

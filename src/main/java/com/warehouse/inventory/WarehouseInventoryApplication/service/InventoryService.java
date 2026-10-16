@@ -24,7 +24,7 @@ public interface InventoryService {
 
     List<StockMovementResponseDTO> getMovements();
 
-    ReconciliationResponseDTO reconcile(ReconciliationRequestDTO dto);
+    ResponseEntity<ReconciliationResponseDTO> reconcile(ReconciliationRequestDTO dto);
 
     List<ReconciliationResponseDTO> getDiscrepancies();
 }
