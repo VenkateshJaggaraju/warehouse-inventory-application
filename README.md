@@ -1,10 +1,10 @@
-Warehouse Inventory and Stock Reconciliation System
+📦 Warehouse Inventory and Stock Reconciliation System
 A RESTful backend application built with Java 17, Spring Boot
 4.1.1, Spring Data JPA, Spring Security, JWT,
 PostgreSQL, Lombok, and MapStruct.
 The application manages products, warehouses, suppliers, stock levels,
 inventory movements, and stock reconciliations through REST APIs.
-Features
+✨ Features
 - Product management with unique SKUs.
 - Warehouse and supplier management.
 - Inventory tracking per product and warehouse.
@@ -20,7 +20,7 @@ Features
   configuration enabled.
 - Transactional stock-changing operations and inventory versioning to
   help protect against concurrent updates.
-Technology Stack
+🛠️ Technology Stack
   Technology                    Purpose
   Java 17                       Programming language
   Spring Boot 4.1.1             Application framework
@@ -32,7 +32,7 @@ Technology Stack
   MapStruct 1.6.3               Compile-time DTO/entity mapping
   Lombok                        Reduces boilerplate in Java classes
   Maven                         Build and dependency management
-Project Structure
+📁 Project Structure
 Main package: com.warehouse.inventory.WarehouseInventoryApplication
 src/main/java/com/warehouse/inventory/WarehouseInventoryApplication/
 ├── config/
@@ -50,7 +50,7 @@ src/main/java/com/warehouse/inventory/WarehouseInventoryApplication/
 └── WarehouseInventoryApplication.java
 Package and class names may differ slightly depending on the current
 project files.
-Domain Overview
+🧩 Domain Overview
 - Product: SKU, name, description, unit price, and reorder level.
 - Warehouse: warehouse name and location.
 - Supplier: supplier name, email, and phone number.
@@ -60,12 +60,12 @@ Domain Overview
   transfer, or dispatch, with a transaction reference.
 - StockReconciliation: stores expected quantity, physical
   quantity, discrepancy, and reference.
-Prerequisites
+📋 Prerequisites
 - JDK 17
 - Maven 3.9+ (or Maven Wrapper, if included)
 - PostgreSQL
 - An IDE such as IntelliJ IDEA or Eclipse (optional)
-Configuration
+⚙️ Configuration
 Configure the database in src/main/resources/application.properties.
 Example:
 spring.application.name=WarehouseInventoryApplication
@@ -97,17 +97,17 @@ $env:DB_PASSWORD = "your-local-password"
 $env:JWT_SECRET = "your-base64-encoded-secret"
 For production, prefer schema migrations such as Flyway or Liquibase
 instead of relying on spring.jpa.hibernate.ddl-auto=update.
-Build and Run
+🚀 Build and Run
 From the project root (the directory containing pom.xml):
 mvn clean verify
 Start the application:
 mvn spring-boot:run
 If your application configures a different port, use that port.
 Otherwise, Spring Boot normally starts on port 8080.
-REST API Overview
+🔗 REST API Overview
 The routes below describe the intended API surface. Confirm exact
 mappings and HTTP methods against your controllers.
-Products
+📦 Products
   Method     Endpoint               Purpose
   POST     /api/products        Create a product
   GET      /api/products        List products
@@ -122,14 +122,14 @@ Example product request:
   "unitPrice": 749.99,
   "reorderLevel": 10
 }
-Warehouses
+🏭 Warehouses
   Method     Endpoint                 Purpose
   POST     /api/warehouses        Create a warehouse
   GET      /api/warehouses        List warehouses
   GET      /api/warehouses/{id}   Get a warehouse
   PUT      /api/warehouses/{id}   Update a warehouse
   DELETE   /api/warehouses/{id}   Delete a warehouse
-Suppliers
+🤝 Suppliers
   Method     Endpoint                Purpose
   POST     /api/suppliers        Create a supplier
   GET      /api/suppliers        List suppliers
@@ -142,7 +142,7 @@ Example supplier request:
   "email": "orders@example.com",
   "phone": "+1-555-0100"
 }
-Inventory and Stock Operations
+📊 Inventory and Stock Operations
   Method                  Endpoint                      Purpose
   GET                   /api/inventory              View inventory
   GET                   /api/inventory/low-stock    List inventory at or
@@ -158,7 +158,7 @@ Inventory and Stock Operations
 The exact JSON fields for receipt, transfer, and dispatch requests
 depend on their request DTOs. Use IDs for existing products, warehouses,
 and suppliers as defined by those DTOs.
-Reconciliation
+🔍 Reconciliation
   Method                  Endpoint                               Purpose
   POST                  /api/reconciliations                 Record a physical stock
                                                                  count
@@ -167,7 +167,7 @@ Reconciliation
 A reconciliation compares the expected quantity with a physical count.
 Verify the service implementation to determine whether it adjusts
 inventory automatically or only records the discrepancy.
-DTOs and MapStruct
+🔄 DTOs and MapStruct
 Controllers should accept request DTOs and return response DTOs rather
 than exposing JPA entities directly.
 - Request DTOs define and validate client input.
@@ -180,7 +180,7 @@ MapStruct and Lombok annotation processing must be configured in Maven.
 If generated mapper implementations are missing, run:
 mvn clean compile
 Then check the compiler output for annotation-processor errors.
-Inventory Rules and Data Integrity
+🛡️ Inventory Rules and Data Integrity
 - A SKU should uniquely identify a product.
 - An inventory row represents one product in one warehouse.
 - Stock quantities should not become negative.
@@ -194,7 +194,7 @@ Inventory Rules and Data Integrity
   updates, but the service layer must handle conflicts appropriately.
 - Database uniqueness constraints remain important even when Java
   validation is used.
-Security Notes
+🔐 Security Notes
 If JWT authentication is configured:
 1. Register or provision a user through the supported registration
    workflow.
@@ -204,7 +204,7 @@ Authorization: Bearer <your-jwt-token>
 Use the actual login and registration routes implemented by the project.
 Configure role-based authorization for administrative changes and stock
 operations according to your business requirements.
-Testing
+🧪 Testing
 Run the test suite:
 mvn test
 Recommended scenarios:
@@ -217,7 +217,7 @@ Recommended scenarios:
 - Reconciliation calculates and reports discrepancies correctly.
 - Unauthenticated requests cannot access protected endpoints.
 - Concurrent updates do not create negative or inconsistent stock.
-Troubleshooting
+🩺 Troubleshooting
 MapStruct implementation not generated
 Run mvn clean compile and check that mapstruct-processor, Lombok,
 and lombok-mapstruct-binding are configured in the Maven compiler
@@ -235,7 +235,7 @@ secret is stable between application restarts.
 Another transaction may have modified the same inventory row. Handle
 concurrent updates safely and retry only when the operation is safe to
 retry.
-Future Improvements
+🚧 Future Improvements
 - Add pagination, sorting, and filtering.
 - Add Flyway or Liquibase database migrations.
 - Add OpenAPI/Swagger documentation.
@@ -244,5 +244,5 @@ Future Improvements
 - Add idempotency keys for receipt, transfer, and dispatch requests.
 - Add Docker Compose for the application and PostgreSQL.
 - Add a CI pipeline for build, test, and static analysis.
-License
+📄 License
 Add your preferred license here before distributing the project.
