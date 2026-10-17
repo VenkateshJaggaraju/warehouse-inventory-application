@@ -35,23 +35,6 @@ inventory movements, and stock reconciliations through REST APIs.
   MapStruct 1.6.3               Compile-time DTO/entity mapping
   Lombok                        Reduces boilerplate in Java classes
   Maven                         Build and dependency management
-  
-📁 Project Structure
-Main package: com.warehouse.inventory.WarehouseInventoryApplication
-src/main/java/com/warehouse/inventory/WarehouseInventoryApplication/
-├── config/
-├── controller/
-├── dto/
-│   ├── request/
-│   └── response/
-├── enums/
-├── exception/
-├── mapper/
-├── model/
-├── repository/
-├── service/
-│   └── impl/
-└── WarehouseInventoryApplication.java
 
 Package and class names may differ slightly depending on the current
 project files.
@@ -71,7 +54,6 @@ project files.
 - Maven 3.9+ (or Maven Wrapper, if included)
 - PostgreSQL
 - An IDE such as IntelliJ IDEA or Eclipse (optional)
-  
 
 🚀 Build and Run
 From the project root (the directory containing pom.xml):
@@ -83,60 +65,7 @@ Otherwise, Spring Boot normally starts on port 8080.
 🔗 REST API Overview
 The routes below describe the intended API surface. Confirm exact
 mappings and HTTP methods against your controllers.
-📦 Products
-  Method     Endpoint               Purpose
-  POST     /api/products        Create a product
-  GET      /api/products        List products
-  GET      /api/products/{id}   Get a product
-  PUT      /api/products/{id}   Update a product
-  DELETE   /api/products/{id}   Delete a product
-  
-Example product request:
-{
-  "sku": "LAPTOP-DELL-001",
-  "name": "Dell Laptop",
-  "description": "Business laptop",
-  "unitPrice": 749.99,
-  "reorderLevel": 10
-}
-
-🏭 Warehouses
-  Method     Endpoint                 Purpose
-  POST     /api/warehouses        Create a warehouse
-  GET      /api/warehouses        List warehouses
-  GET      /api/warehouses/{id}   Get a warehouse
-  PUT      /api/warehouses/{id}   Update a warehouse
-  DELETE   /api/warehouses/{id}   Delete a warehouse
-  
-🤝 Suppliers
-  Method     Endpoint                Purpose
-  POST     /api/suppliers        Create a supplier
-  GET      /api/suppliers        List suppliers
-  GET      /api/suppliers/{id}   Get a supplier
-  PUT      /api/suppliers/{id}   Update a supplier
-  DELETE   /api/suppliers/{id}   Delete a supplier
-  
-Example supplier request:
-{
-  "name": "Acme Supplies",
-  "email": "orders@example.com",
-  "phone": "+1-555-0100"
-}
-
-📊 Inventory and Stock Operations
-  Method                  Endpoint                      Purpose
-  GET                   /api/inventory              View inventory
-  GET                   /api/inventory/low-stock    List inventory at or
-                                                        below reorder levels
-  GET                   /api/inventory/movements    View stock movement
-                                                        history
-  POST                  /api/inventory/receipts     Receive stock into a
-                                                        warehouse
-  POST                  /api/inventory/transfers    Transfer stock between
-                                                        warehouses
-  POST                  /api/inventory/dispatches   Dispatch stock from a
-                                                    warehouse
-                                                    
+                                             
 The exact JSON fields for receipt, transfer, and dispatch requests
 depend on their request DTOs. Use IDs for existing products, warehouses,
 and suppliers as defined by those DTOs.
