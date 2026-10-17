@@ -162,6 +162,3 @@ Recommended scenarios:
 - Add idempotency keys for receipt, transfer, and dispatch requests.
 - Add Docker Compose for the application and PostgreSQL.
 - Add a CI pipeline for build, test, and static analysis.
-  
-📄 License
-Add your preferred license here before distributing the project.
