@@ -25,6 +25,7 @@ inventory movements, and stock reconciliations through REST APIs.
   
 🛠️ Technology Stack
   Technology                    Purpose
+  
   Java 17                       Programming language
   Spring Boot 4.1.1             Application framework
   Spring Web MVC                REST API endpoints
