@@ -22,6 +22,7 @@ inventory movements, and stock reconciliations through REST APIs.
   configuration enabled.
 - Transactional stock-changing operations and inventory versioning to
   help protect against concurrent updates.
+  
 🛠️ Technology Stack
   Technology                    Purpose
   Java 17                       Programming language
@@ -39,17 +40,29 @@ inventory movements, and stock reconciliations through REST APIs.
 Main package: com.warehouse.inventory.WarehouseInventoryApplication
 src/main/java/com/warehouse/inventory/WarehouseInventoryApplication/
 ├── config/
+
 ├── controller/
+
 ├── dto/
+
 │   ├── request/
+
 │   └── response/
+
 ├── enums/
+
 ├── exception/
+
 ├── mapper/
+
 ├── model/
+
 ├── repository/
+
 ├── service/
+
 │   └── impl/
+
 └── WarehouseInventoryApplication.java
 
 Package and class names may differ slightly depending on the current
