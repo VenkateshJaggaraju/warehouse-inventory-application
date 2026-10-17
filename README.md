@@ -38,6 +38,7 @@ inventory movements, and stock reconciliations through REST APIs.
 
 Package and class names may differ slightly depending on the current
 project files.
+
 🧩 Domain Overview
 - Product: SKU, name, description, unit price, and reorder level.
 - Warehouse: warehouse name and location.
@@ -57,11 +58,14 @@ project files.
 
 🚀 Build and Run
 From the project root (the directory containing pom.xml):
+
 mvn clean verify
 Start the application:
 mvn spring-boot:run
+
 If your application configures a different port, use that port.
 Otherwise, Spring Boot normally starts on port 8080.
+
 🔗 REST API Overview
 The routes below describe the intended API surface. Confirm exact
 mappings and HTTP methods against your controllers.
@@ -69,13 +73,6 @@ mappings and HTTP methods against your controllers.
 The exact JSON fields for receipt, transfer, and dispatch requests
 depend on their request DTOs. Use IDs for existing products, warehouses,
 and suppliers as defined by those DTOs.
-
-🔍 Reconciliation
-  Method                  Endpoint                               Purpose
-  POST                  /api/reconciliations                 Record a physical stock
-                                                                 count
-  GET                   /api/reconciliations/discrepancies   View reconciliation
-                                                             discrepancies
                                                              
 A reconciliation compares the expected quantity with a physical count.
 Verify the service implementation to determine whether it adjusts
