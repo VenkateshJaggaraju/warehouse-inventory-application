@@ -25,17 +25,16 @@ inventory movements, and stock reconciliations through REST APIs.
   
 🛠️ Technology Stack
   Technology                    Purpose
-  
-  Java 17                       Programming language
-  Spring Boot 4.1.1             Application framework
-  Spring Web MVC                REST API endpoints
-  Spring Data JPA / Hibernate   Persistence and ORM
-  PostgreSQL                    Relational database
-  Spring Security               Authentication and authorization
-  JJWT 0.13.0                   JWT creation and validation
-  MapStruct 1.6.3               Compile-time DTO/entity mapping
-  Lombok                        Reduces boilerplate in Java classes
-  Maven                         Build and dependency management
+ - Java 17                       Programming language
+ - Spring Boot 4.1.1             Application framework
+ - Spring Web MVC                REST API endpoints
+ - Spring Data JPA / Hibernate   Persistence and ORM
+ - PostgreSQL                    Relational database
+ - Spring Security               Authentication and authorization
+ - JJWT 0.13.0                   JWT creation and validation
+ - MapStruct 1.6.3               Compile-time DTO/entity mapping
+ - Lombok                        Reduces boilerplate in Java classes
+ - Maven                         Build and dependency management
 
 Package and class names may differ slightly depending on the current
 project files.
