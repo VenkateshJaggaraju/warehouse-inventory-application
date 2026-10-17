@@ -59,9 +59,9 @@ project files.
 🚀 Build and Run
 From the project root (the directory containing pom.xml):
 
-mvn clean verify
-Start the application:
-mvn spring-boot:run
+- mvn clean verify
+- Start the application:
+- mvn spring-boot:run
 
 If your application configures a different port, use that port.
 Otherwise, Spring Boot normally starts on port 8080.
