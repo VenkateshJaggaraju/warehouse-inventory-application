@@ -135,23 +135,23 @@ Recommended scenarios:
 - Concurrent updates do not create negative or inconsistent stock.
   
 🩺 Troubleshooting
-MapStruct implementation not generated
-Run mvn clean compile and check that mapstruct-processor, Lombok,
-and lombok-mapstruct-binding are configured in the Maven compiler
-annotation processor paths.
-Database connection failure
-Verify PostgreSQL is running, the database exists, and DB_URL,
-DB_USERNAME, and DB_PASSWORD match your local setup.
-Validation annotations do not run
-Ensure spring-boot-starter-validation is present and controller
-request bodies use @Valid.
-401 Unauthorized
-Check that the request includes a valid bearer token and that the JWT
-secret is stable between application restarts.
-409 Conflict or optimistic locking failure
-Another transaction may have modified the same inventory row. Handle
-concurrent updates safely and retry only when the operation is safe to
-retry.
+- MapStruct implementation not generated
+- Run mvn clean compile and check that mapstruct-processor, Lombok,
+  and lombok-mapstruct-binding are configured in the Maven compiler
+  annotation processor paths.
+- Database connection failure
+- Verify PostgreSQL is running, the database exists, and DB_URL,
+  DB_USERNAME, and DB_PASSWORD match your local setup.
+- Validation annotations do not run
+- Ensure spring-boot-starter-validation is present and controller
+  request bodies use @Valid.
+- 401 Unauthorized
+- Check that the request includes a valid bearer token and that the JWT
+  secret is stable between application restarts.
+- 409 Conflict or optimistic locking failure
+- Another transaction may have modified the same inventory row. Handle
+  concurrent updates safely and retry only when the operation is safe to
+  retry.
 
 🚧 Future Improvements
 - Add pagination, sorting, and filtering.
