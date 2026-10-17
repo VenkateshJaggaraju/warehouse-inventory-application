@@ -1,9 +1,11 @@
 📦 Warehouse Inventory and Stock Reconciliation System
+
 A RESTful backend application built with Java 17, Spring Boot
 4.1.1, Spring Data JPA, Spring Security, JWT,
 PostgreSQL, Lombok, and MapStruct.
 The application manages products, warehouses, suppliers, stock levels,
 inventory movements, and stock reconciliations through REST APIs.
+
 ✨ Features
 - Product management with unique SKUs.
 - Warehouse and supplier management.
@@ -32,6 +34,7 @@ inventory movements, and stock reconciliations through REST APIs.
   MapStruct 1.6.3               Compile-time DTO/entity mapping
   Lombok                        Reduces boilerplate in Java classes
   Maven                         Build and dependency management
+  
 📁 Project Structure
 Main package: com.warehouse.inventory.WarehouseInventoryApplication
 src/main/java/com/warehouse/inventory/WarehouseInventoryApplication/
@@ -48,6 +51,7 @@ src/main/java/com/warehouse/inventory/WarehouseInventoryApplication/
 ├── service/
 │   └── impl/
 └── WarehouseInventoryApplication.java
+
 Package and class names may differ slightly depending on the current
 project files.
 🧩 Domain Overview
@@ -60,43 +64,14 @@ project files.
   transfer, or dispatch, with a transaction reference.
 - StockReconciliation: stores expected quantity, physical
   quantity, discrepancy, and reference.
+  
 📋 Prerequisites
 - JDK 17
 - Maven 3.9+ (or Maven Wrapper, if included)
 - PostgreSQL
 - An IDE such as IntelliJ IDEA or Eclipse (optional)
-⚙️ Configuration
-Configure the database in src/main/resources/application.properties.
-Example:
-spring.application.name=WarehouseInventoryApplication
-spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/warehouse_inventory}
-spring.datasource.username=${DB_USERNAME:postgres}
-spring.datasource.password=${DB_PASSWORD:change-me}
+  
 
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.format_sql=true
-Create the database before starting the application:
-CREATE DATABASE warehouse_inventory;
-Replace the example credentials. Do not commit real passwords,
-production connection strings, or JWT secrets to source control.
-If JWT is enabled, configure the secret and expiration according to the
-property names used by your JWT service. Keep the secret stable across
-application restarts and store it in an environment variable or secret
-manager.
-Example environment variables (adapt property names to your
-configuration):
-export DB_URL="jdbc:postgresql://localhost:5432/warehouse_inventory"
-export DB_USERNAME="postgres"
-export DB_PASSWORD="your-local-password"
-export JWT_SECRET="your-base64-encoded-secret"
-Windows PowerShell:
-$env:DB_URL = "jdbc:postgresql://localhost:5432/warehouse_inventory"
-$env:DB_USERNAME = "postgres"
-$env:DB_PASSWORD = "your-local-password"
-$env:JWT_SECRET = "your-base64-encoded-secret"
-For production, prefer schema migrations such as Flyway or Liquibase
-instead of relying on spring.jpa.hibernate.ddl-auto=update.
 🚀 Build and Run
 From the project root (the directory containing pom.xml):
 mvn clean verify
@@ -114,6 +89,7 @@ mappings and HTTP methods against your controllers.
   GET      /api/products/{id}   Get a product
   PUT      /api/products/{id}   Update a product
   DELETE   /api/products/{id}   Delete a product
+  
 Example product request:
 {
   "sku": "LAPTOP-DELL-001",
@@ -122,6 +98,7 @@ Example product request:
   "unitPrice": 749.99,
   "reorderLevel": 10
 }
+
 🏭 Warehouses
   Method     Endpoint                 Purpose
   POST     /api/warehouses        Create a warehouse
@@ -129,6 +106,7 @@ Example product request:
   GET      /api/warehouses/{id}   Get a warehouse
   PUT      /api/warehouses/{id}   Update a warehouse
   DELETE   /api/warehouses/{id}   Delete a warehouse
+  
 🤝 Suppliers
   Method     Endpoint                Purpose
   POST     /api/suppliers        Create a supplier
@@ -136,12 +114,14 @@ Example product request:
   GET      /api/suppliers/{id}   Get a supplier
   PUT      /api/suppliers/{id}   Update a supplier
   DELETE   /api/suppliers/{id}   Delete a supplier
+  
 Example supplier request:
 {
   "name": "Acme Supplies",
   "email": "orders@example.com",
   "phone": "+1-555-0100"
 }
+
 📊 Inventory and Stock Operations
   Method                  Endpoint                      Purpose
   GET                   /api/inventory              View inventory
@@ -155,18 +135,22 @@ Example supplier request:
                                                         warehouses
   POST                  /api/inventory/dispatches   Dispatch stock from a
                                                     warehouse
+                                                    
 The exact JSON fields for receipt, transfer, and dispatch requests
 depend on their request DTOs. Use IDs for existing products, warehouses,
 and suppliers as defined by those DTOs.
+
 🔍 Reconciliation
   Method                  Endpoint                               Purpose
   POST                  /api/reconciliations                 Record a physical stock
                                                                  count
   GET                   /api/reconciliations/discrepancies   View reconciliation
                                                              discrepancies
+                                                             
 A reconciliation compares the expected quantity with a physical count.
 Verify the service implementation to determine whether it adjusts
 inventory automatically or only records the discrepancy.
+
 🔄 DTOs and MapStruct
 Controllers should accept request DTOs and return response DTOs rather
 than exposing JPA entities directly.
@@ -176,10 +160,13 @@ than exposing JPA entities directly.
   time.
 - Services contain business rules and transaction boundaries.
 - Repositories perform database operations.
+  
 MapStruct and Lombok annotation processing must be configured in Maven.
+
 If generated mapper implementations are missing, run:
 mvn clean compile
 Then check the compiler output for annotation-processor errors.
+
 🛡️ Inventory Rules and Data Integrity
 - A SKU should uniquely identify a product.
 - An inventory row represents one product in one warehouse.
@@ -194,6 +181,7 @@ Then check the compiler output for annotation-processor errors.
   updates, but the service layer must handle conflicts appropriately.
 - Database uniqueness constraints remain important even when Java
   validation is used.
+  
 🔐 Security Notes
 If JWT authentication is configured:
 1. Register or provision a user through the supported registration
@@ -204,6 +192,7 @@ Authorization: Bearer <your-jwt-token>
 Use the actual login and registration routes implemented by the project.
 Configure role-based authorization for administrative changes and stock
 operations according to your business requirements.
+
 🧪 Testing
 Run the test suite:
 mvn test
@@ -217,6 +206,7 @@ Recommended scenarios:
 - Reconciliation calculates and reports discrepancies correctly.
 - Unauthenticated requests cannot access protected endpoints.
 - Concurrent updates do not create negative or inconsistent stock.
+  
 🩺 Troubleshooting
 MapStruct implementation not generated
 Run mvn clean compile and check that mapstruct-processor, Lombok,
@@ -235,6 +225,7 @@ secret is stable between application restarts.
 Another transaction may have modified the same inventory row. Handle
 concurrent updates safely and retry only when the operation is safe to
 retry.
+
 🚧 Future Improvements
 - Add pagination, sorting, and filtering.
 - Add Flyway or Liquibase database migrations.
@@ -244,5 +235,6 @@ retry.
 - Add idempotency keys for receipt, transfer, and dispatch requests.
 - Add Docker Compose for the application and PostgreSQL.
 - Add a CI pipeline for build, test, and static analysis.
+  
 📄 License
 Add your preferred license here before distributing the project.
